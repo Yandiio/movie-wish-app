@@ -1,13 +1,8 @@
 package com.wish.movieapp.ui.movie
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.wish.movieapp.data.MovieCatalogueRepository
 
-class MovieViewModel : ViewModel() {
-
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
-    }
-    val text: LiveData<String> = _text
+class MovieViewModel(private val movieCatalogueRepository: MovieCatalogueRepository) : ViewModel() {
+    fun getMovies(sort: String) = movieCatalogueRepository.getMovies(sort)
 }

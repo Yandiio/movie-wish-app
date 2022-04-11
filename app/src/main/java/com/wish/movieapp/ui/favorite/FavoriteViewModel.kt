@@ -1,4 +1,4 @@
-package com.wish.movieapp.ui.dashboard
+package com.wish.movieapp.ui.favorite
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

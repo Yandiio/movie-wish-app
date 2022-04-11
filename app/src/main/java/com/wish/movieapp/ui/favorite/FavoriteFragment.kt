@@ -1,4 +1,4 @@
-package com.wish.movieapp.ui.dashboard
+package com.wish.movieapp.ui.favorite
 
 import android.os.Bundle
 import android.view.LayoutInflater
