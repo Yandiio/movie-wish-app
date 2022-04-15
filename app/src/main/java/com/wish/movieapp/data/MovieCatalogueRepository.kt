@@ -145,19 +145,23 @@ class MovieCatalogueRepository private constructor(
             override fun saveCallResult(data: List<TvShow>) {
                 val movieList = ArrayList<TvShowEntity>()
                 for (response in data) {
-                    val movie = TvShowEntity(
-                        id = response.id,
-                        backdropPath = response.backdropPath,
-                        genres = "",
-                        overview = response.overview,
-                        posterPath = response.posterPath,
-                        releaseDate = response.firstAirDate,
-                        runtime = 0,
-                        name = response.name,
-                        voteAverage = response.voteAverage,
-                        isFav = false
-                    )
-                    movieList.add(movie)
+                    val movie = response.backdropPath?.let {
+                        TvShowEntity(
+                            id = response.id,
+                            backdropPath = it,
+                            genres = "",
+                            overview = response.overview,
+                            posterPath = response.posterPath,
+                            releaseDate = response.firstAirDate,
+                            runtime = 0,
+                            name = response.name,
+                            voteAverage = response.voteAverage,
+                            isFav = false
+                        )
+                    }
+                    if (movie != null) {
+                        movieList.add(movie)
+                    }
                 }
                 localDataSource.insertTvShows(movieList)
             }

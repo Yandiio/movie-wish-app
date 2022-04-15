@@ -21,13 +21,7 @@ import com.wish.movieapp.vo.Status
 
 class TvShowFragment : Fragment() {
 
-    private var _binding: FragmentTvshowBinding? = null
     private lateinit var fragmentTvShowBinding: FragmentTvshowBinding
-    private lateinit var viewModel: MovieViewModel
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,6 +49,7 @@ class TvShowFragment : Fragment() {
                         Status.LOADING -> showProgressBar(true)
                         Status.SUCCESS -> {
                             showProgressBar(false)
+                            tvShowAdapter.submitList(tvShows.data)
                             tvShowAdapter.notifyDataSetChanged()
                         }
                         Status.ERROR -> {
@@ -74,11 +69,6 @@ class TvShowFragment : Fragment() {
                 this.adapter = tvShowAdapter
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun showProgressBar(state: Boolean) {
