@@ -10,4 +10,5 @@
     <string name="favorites">Favorites</string>
     <string name="film_title">Title</string>
     <string name="poster">poster</string>
+    <string name="release_date">Release Date</string>
 </resources>

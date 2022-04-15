@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.PagedList
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wish.movieapp.utils.SortUtils.VOTE_BEST
@@ -61,12 +62,13 @@ class MovieFragment : Fragment() {
         }
     }
 
-    private val movieObserver = Observer<Resource<PagingData<MovieEntity>>> { movies ->
+    private val movieObserver = Observer<Resource<PagedList<MovieEntity>>> { movies ->
         if (movies != null) {
             when (movies.status) {
                 Status.LOADING -> showProgressBar(true)
                 Status.SUCCESS -> {
                     showProgressBar(false)
+                    movieAdapter.submitList(movies.data)
                     movieAdapter.notifyDataSetChanged()
                 }
                 Status.ERROR -> {

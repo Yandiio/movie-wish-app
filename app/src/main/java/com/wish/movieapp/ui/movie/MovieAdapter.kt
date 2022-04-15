@@ -6,12 +6,13 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.paging.PagingDataAdapter
+import androidx.paging.PagedListAdapter
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.wish.movieapp.BuildConfig.IMAGE_URL
 import com.bumptech.glide.request.transition.Transition
@@ -19,14 +20,17 @@ import com.wish.movieapp.R
 import com.wish.movieapp.data.local.entity.MovieEntity
 import com.wish.movieapp.databinding.ItemMovieBinding
 
-class MovieAdapter: PagingDataAdapter<MovieEntity, MovieAdapter.MovieViewHolder>(DIFF_CALLBACK) {
-    object DIFF_CALLBACK : DiffUtil.ItemCallback<MovieEntity>() {
-        override fun areItemsTheSame(oldItem: MovieEntity, newItem: MovieEntity): Boolean {
-            return oldItem.id == newItem.id
-        }
+class MovieAdapter : PagedListAdapter<MovieEntity, MovieAdapter.MovieViewHolder>(DIFF_CALLBACK) {
 
-        override fun areContentsTheSame(oldItem: MovieEntity, newItem: MovieEntity): Boolean {
-            return oldItem == newItem
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<MovieEntity>() {
+            override fun areItemsTheSame(oldItem: MovieEntity, newItem: MovieEntity): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: MovieEntity, newItem: MovieEntity): Boolean {
+                return oldItem == newItem
+            }
         }
     }
 
@@ -34,24 +38,19 @@ class MovieAdapter: PagingDataAdapter<MovieEntity, MovieAdapter.MovieViewHolder>
         fun bind(movie: MovieEntity) {
             with(view) {
                 tvTitle.text = movie.title
-                tvGenre.text = movie.genres
+                tvReleaseDate.text = movie.releaseDate
                 tvRating.text = movie.voteAverage.toString()
+
 
                 Glide.with(itemView.context)
                     .asBitmap()
                     .load(IMAGE_URL + movie.posterPath)
-//                    .apply(RequestOptions.placeholderOf(R.drawable.ic_movie_poster_placeholder))
+                    .apply(RequestOptions.placeholderOf(R.drawable.ic_movie_poster_placeholder))
                     .transform(RoundedCorners(28))
                     .into(object : CustomTarget<Bitmap>() {
                         @RequiresApi(Build.VERSION_CODES.M)
                         override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                             ivPoster.setImageBitmap(resource)
-
-                            Palette.from(resource).generate { palette ->
-                                val defValue = itemView.resources.getColor(R.color.black, itemView.context.theme)
-                                cardItem.setCardBackgroundColor(palette?.getDarkMutedColor(defValue)
-                                    ?: defValue)
-                            }
                         }
 
                         override fun onLoadCleared(placeholder: Drawable?) {
