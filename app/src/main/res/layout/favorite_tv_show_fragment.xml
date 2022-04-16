@@ -6,8 +6,15 @@
     tools:context=".ui.favorite.tvshow.FavoriteTvShowFragment">
 
     <TextView
+        android:id="@+id/tv_not_found"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/data_tidak_ditemukan" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_fav_tv_shows"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/tv_show" />
-
+        tools:listitem="@layout/item_movie" />
 </FrameLayout>

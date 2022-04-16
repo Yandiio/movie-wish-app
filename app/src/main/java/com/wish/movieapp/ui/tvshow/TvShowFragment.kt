@@ -45,7 +45,7 @@ class TvShowFragment : Fragment(), TvShowAdapter.OnItemClickCallback {
             val viewModel = ViewModelProvider(this, factory)[TvShowViewModel::class.java]
 
             val tvShowAdapter = TvShowAdapter()
-            viewModel.getTvShow(VOTE_BEST).observe(viewLifecycleOwner, { tvShows ->
+            viewModel.getTvShow(VOTE_BEST).observe(viewLifecycleOwner) { tvShows ->
                 if (tvShows != null) {
                     when (tvShows.status) {
                         Status.LOADING -> showProgressBar(true)
@@ -61,7 +61,7 @@ class TvShowFragment : Fragment(), TvShowAdapter.OnItemClickCallback {
                         }
                     }
                 }
-            })
+            }
 
             val marginVertical = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, resources.displayMetrics)
 

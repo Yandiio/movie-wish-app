@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -24,7 +25,7 @@ import com.wish.movieapp.viewmodel.ViewModelFactory
 import com.wish.movieapp.vo.Status
 import kotlin.math.abs
 
-class DetailActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
+class DetailActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener, View.OnClickListener {
     companion object {
         const val EXTRA_FILM = "extra_film"
         const val EXTRA_CATEGORY = "extra_category"
@@ -53,6 +54,8 @@ class DetailActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener
         val factory = ViewModelFactory.getInstance(this)
         viewModel = ViewModelProvider(this, factory)[DetailViewModel::class.java]
 
+        detailBinding.fabAddToFavorite.setOnClickListener(this)
+
         val extras = intent.extras
         if (extras != null) {
             val dataId = extras.getString(EXTRA_FILM)
@@ -62,7 +65,7 @@ class DetailActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener
                 viewModel.setDetail(dataId, dataCategory.toString())
                 setupState()
                 if (dataCategory == MOVIE) {
-                    viewModel.getDetailMovie().observe(this, { detail ->
+                    viewModel.getDetailMovie().observe(this) { detail ->
                         when (detail.status) {
                             Status.LOADING -> showProgressBar(true)
                             Status.SUCCESS -> {
@@ -73,12 +76,16 @@ class DetailActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener
                             }
                             Status.ERROR -> {
                                 showProgressBar(false)
-                                Toast.makeText(applicationContext, "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Terjadi kesalahan",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
-                    })
+                    }
                 } else if (dataCategory == TV_SHOW) {
-                    viewModel.getDetailTvShow().observe(this, { detail ->
+                    viewModel.getDetailTvShow().observe(this) { detail ->
                         when (detail.status) {
                             Status.LOADING -> showProgressBar(true)
                             Status.SUCCESS -> {
@@ -89,10 +96,14 @@ class DetailActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener
                             }
                             Status.ERROR -> {
                                 showProgressBar(false)
-                                Toast.makeText(applicationContext, "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Terjadi kesalahan",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
-                    })
+                    }
                 }
             }
         }
@@ -164,7 +175,7 @@ class DetailActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener
 
     private fun setupState() {
         if (dataCategory == MOVIE) {
-            viewModel.getDetailMovie().observe(this, { movie ->
+            viewModel.getDetailMovie().observe(this) { movie ->
                 when (movie.status) {
                     Status.LOADING -> showProgressBar(true)
                     Status.SUCCESS -> {
@@ -175,12 +186,13 @@ class DetailActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener
                     }
                     Status.ERROR -> {
                         showProgressBar(false)
-                        Toast.makeText(applicationContext, "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, "Terjadi kesalahan", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
-            })
+            }
         } else if (dataCategory == TV_SHOW) {
-            viewModel.getDetailTvShow().observe(this, { tvShow ->
+            viewModel.getDetailTvShow().observe(this) { tvShow ->
                 when (tvShow.status) {
                     Status.LOADING -> showProgressBar(true)
                     Status.SUCCESS -> {
@@ -191,10 +203,11 @@ class DetailActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener
                     }
                     Status.ERROR -> {
                         showProgressBar(false)
-                        Toast.makeText(applicationContext, "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, "Terjadi kesalahan", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
-            })
+            }
         }
     }
 
@@ -220,6 +233,22 @@ class DetailActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener
             if (mIsImageHidden) {
                 mIsImageHidden = false
             }
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.fab_add_to_favorite -> {
+                onFabClicked()
+            }
+        }
+    }
+
+    private fun onFabClicked() {
+        if (dataCategory == MOVIE) {
+            viewModel.setFavoriteMovie()
+        } else if (dataCategory == TV_SHOW) {
+            viewModel.setFavoriteTvShow()
         }
     }
 }
