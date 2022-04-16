@@ -19,7 +19,7 @@ import com.wish.movieapp.R
 import com.wish.movieapp.data.local.entity.TvShowEntity
 import com.wish.movieapp.databinding.ItemMovieBinding
 
-class TvShowAdpater : PagedListAdapter<TvShowEntity, TvShowAdpater.TvShowViewHolder>(DIFF_CALLBACK) {
+class TvShowAdapter : PagedListAdapter<TvShowEntity, TvShowAdapter.TvShowViewHolder>(DIFF_CALLBACK) {
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<TvShowEntity>() {
             override fun areItemsTheSame(oldItem: TvShowEntity, newItem: TvShowEntity): Boolean {
@@ -30,6 +30,12 @@ class TvShowAdpater : PagedListAdapter<TvShowEntity, TvShowAdpater.TvShowViewHol
                 return oldItem == newItem
             }
         }
+    }
+
+    private lateinit var onItemClickCallback: OnItemClickCallback
+
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+        this.onItemClickCallback = onItemClickCallback
     }
 
     inner class TvShowViewHolder(private val binding: ItemMovieBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -53,7 +59,7 @@ class TvShowAdpater : PagedListAdapter<TvShowEntity, TvShowAdpater.TvShowViewHol
                         override fun onLoadCleared(placeholder: Drawable?) {
                         }
                     })
-
+                itemView.setOnClickListener { onItemClickCallback.onItemClicked(tvShow.id.toString()) }
             }
         }
 
@@ -70,5 +76,9 @@ class TvShowAdpater : PagedListAdapter<TvShowEntity, TvShowAdpater.TvShowViewHol
         if (tvShow != null) {
             holder.bind(tvShow)
         }
+    }
+
+    interface OnItemClickCallback {
+        fun onItemClicked(id: String)
     }
 }

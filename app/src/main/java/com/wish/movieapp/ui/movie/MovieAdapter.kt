@@ -34,6 +34,13 @@ class MovieAdapter : PagedListAdapter<MovieEntity, MovieAdapter.MovieViewHolder>
         }
     }
 
+    private lateinit var onItemClickCallback: OnItemClickCallback
+
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+        this.onItemClickCallback = onItemClickCallback
+    }
+
+
     inner class MovieViewHolder(private val view: ItemMovieBinding) : RecyclerView.ViewHolder(view.root) {
         fun bind(movie: MovieEntity) {
             with(view) {
@@ -57,6 +64,8 @@ class MovieAdapter : PagedListAdapter<MovieEntity, MovieAdapter.MovieViewHolder>
                         }
                     })
             }
+            itemView.setOnClickListener { onItemClickCallback.onItemClicked(movie.id.toString()) }
+
         }
     }
 
@@ -70,5 +79,9 @@ class MovieAdapter : PagedListAdapter<MovieEntity, MovieAdapter.MovieViewHolder>
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val itemMovieBinding = ItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MovieViewHolder(itemMovieBinding)
+    }
+
+    interface OnItemClickCallback {
+        fun onItemClicked(id: String)
     }
 }

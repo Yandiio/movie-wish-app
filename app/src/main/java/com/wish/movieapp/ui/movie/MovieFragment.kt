@@ -1,5 +1,6 @@
 package com.wish.movieapp.ui.movie
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.*
@@ -16,12 +17,14 @@ import com.wish.movieapp.utils.SortUtils.VOTE_BEST
 import com.wish.movieapp.data.local.entity.MovieEntity
 import com.wish.movieapp.databinding.FragmentMovieBinding
 import com.wish.movieapp.ui.MainActivity
+import com.wish.movieapp.ui.detail.DetailActivity
+import com.wish.movieapp.ui.detail.DetailViewModel.Companion.MOVIE
 import com.wish.movieapp.utils.MarginItemDecoration
 import com.wish.movieapp.viewmodel.ViewModelFactory
 import com.wish.movieapp.vo.Resource
 import com.wish.movieapp.vo.Status
 
-class MovieFragment : Fragment() {
+class MovieFragment : Fragment(), MovieAdapter.OnItemClickCallback {
 
     private lateinit var fragmentMovieBinding: FragmentMovieBinding
     private lateinit var viewModel: MovieViewModel
@@ -69,6 +72,7 @@ class MovieFragment : Fragment() {
                 Status.SUCCESS -> {
                     showProgressBar(false)
                     movieAdapter.submitList(movies.data)
+                    movieAdapter.setOnItemClickCallback(this)
                     movieAdapter.notifyDataSetChanged()
                 }
                 Status.ERROR -> {
@@ -83,4 +87,11 @@ class MovieFragment : Fragment() {
         fragmentMovieBinding.progressMovie.isVisible = state
         fragmentMovieBinding.rvMovie.isInvisible = state
     }
+
+    override fun onItemClicked(id: String) {
+        val intent = Intent(context, DetailActivity::class.java)
+        intent.putExtra(DetailActivity.EXTRA_FILM, id)
+        intent.putExtra(DetailActivity.EXTRA_CATEGORY, MOVIE)
+
+        context?.startActivity(intent)    }
 }

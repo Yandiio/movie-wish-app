@@ -1,5 +1,6 @@
 package com.wish.movieapp.ui.tvshow
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -14,12 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.wish.movieapp.utils.SortUtils.VOTE_BEST
 import com.wish.movieapp.databinding.FragmentTvshowBinding
 import com.wish.movieapp.ui.MainActivity
-import com.wish.movieapp.ui.movie.MovieViewModel
+import com.wish.movieapp.ui.detail.DetailActivity
+import com.wish.movieapp.ui.detail.DetailViewModel.Companion.TV_SHOW
 import com.wish.movieapp.utils.MarginItemDecoration
 import com.wish.movieapp.viewmodel.ViewModelFactory
 import com.wish.movieapp.vo.Status
 
-class TvShowFragment : Fragment() {
+class TvShowFragment : Fragment(), TvShowAdapter.OnItemClickCallback {
 
     private lateinit var fragmentTvShowBinding: FragmentTvshowBinding
 
@@ -42,7 +44,7 @@ class TvShowFragment : Fragment() {
             val factory = ViewModelFactory.getInstance(requireActivity())
             val viewModel = ViewModelProvider(this, factory)[TvShowViewModel::class.java]
 
-            val tvShowAdapter = TvShowAdpater()
+            val tvShowAdapter = TvShowAdapter()
             viewModel.getTvShow(VOTE_BEST).observe(viewLifecycleOwner, { tvShows ->
                 if (tvShows != null) {
                     when (tvShows.status) {
@@ -50,6 +52,7 @@ class TvShowFragment : Fragment() {
                         Status.SUCCESS -> {
                             showProgressBar(false)
                             tvShowAdapter.submitList(tvShows.data)
+                            tvShowAdapter.setOnItemClickCallback(this)
                             tvShowAdapter.notifyDataSetChanged()
                         }
                         Status.ERROR -> {
@@ -74,5 +77,13 @@ class TvShowFragment : Fragment() {
     private fun showProgressBar(state: Boolean) {
         fragmentTvShowBinding.progressTvshow.isVisible = state
         fragmentTvShowBinding.rvTvShow.isInvisible = state
+    }
+
+    override fun onItemClicked(id: String) {
+        val intent = Intent(context, DetailActivity::class.java)
+        intent.putExtra(DetailActivity.EXTRA_FILM, id)
+        intent.putExtra(DetailActivity.EXTRA_CATEGORY, TV_SHOW)
+
+        context?.startActivity(intent)
     }
 }
