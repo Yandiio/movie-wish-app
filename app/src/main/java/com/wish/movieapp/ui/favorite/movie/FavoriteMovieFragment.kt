@@ -1,20 +1,22 @@
 package com.wish.movieapp.ui.favorite.movie
 
-import androidx.lifecycle.ViewModelProvider
+import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.wish.movieapp.R
 import com.wish.movieapp.databinding.FavoriteMovieFragmentBinding
+import com.wish.movieapp.ui.detail.DetailActivity
+import com.wish.movieapp.ui.detail.DetailViewModel.Companion.MOVIE
 import com.wish.movieapp.utils.MarginItemDecoration
 import com.wish.movieapp.viewmodel.ViewModelFactory
 
@@ -30,13 +32,15 @@ class FavoriteMovieFragment : Fragment(), FavoriteMovieAdapter.OnItemClickCallba
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.favorite_movie_fragment, container, false)
+        _fragmentMovieFavoriteBinding = FavoriteMovieFragmentBinding.inflate(layoutInflater, container, false)
+        return binding?.root
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.getFavMovies().observe(viewLifecycleOwner) { favMovies ->
-            if (favMovies != null) {
+            if (!favMovies.isEmpty() || favMovies != null) {
+                binding?.tvNotFound?.isVisible = false
                 adapter.submitList(favMovies)
             }
         }
@@ -55,12 +59,9 @@ class FavoriteMovieFragment : Fragment(), FavoriteMovieAdapter.OnItemClickCallba
             adapter.setOnItemClickCallback(this)
 
             viewModel.getFavMovies().observe(viewLifecycleOwner) { favMovies ->
-                if (favMovies != null) {
-                    binding?.tvNotFound?.isInvisible = true
+                if (!favMovies.isEmpty() || favMovies != null) {
+                    binding?.tvNotFound?.isVisible = false
                     adapter.submitList(favMovies)
-                } else {
-                    binding?.tvNotFound?.isVisible = true
-                    binding?.rvFavMovies?.isInvisible = true
                 }
             }
 
@@ -96,8 +97,16 @@ class FavoriteMovieFragment : Fragment(), FavoriteMovieAdapter.OnItemClickCallba
         }
     })
 
-    override fun onItemClicked(id: String) {
-        TODO("Not yet implemented")
+    override fun onDestroy() {
+        super.onDestroy()
+        _fragmentMovieFavoriteBinding = null
     }
 
+    override fun onItemClicked(id: String) {
+        val intent = Intent(context, DetailActivity::class.java)
+        intent.putExtra(DetailActivity.EXTRA_FILM, id)
+        intent.putExtra(DetailActivity.EXTRA_CATEGORY, MOVIE)
+
+        context?.startActivity(intent)
+    }
 }

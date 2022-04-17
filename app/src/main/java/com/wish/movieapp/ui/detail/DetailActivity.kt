@@ -182,6 +182,7 @@ class DetailActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener
                         if (movie.data != null) {
                             showProgressBar(false)
                             val state = movie.data.isFav
+                            setFavoriteState(state)
                         }
                     }
                     Status.ERROR -> {
@@ -199,6 +200,7 @@ class DetailActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener
                         if (tvShow.data != null) {
                             showProgressBar(false)
                             val state = tvShow.data.isFav
+                            setFavoriteState(state)
                         }
                     }
                     Status.ERROR -> {
@@ -249,6 +251,15 @@ class DetailActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener
             viewModel.setFavoriteMovie()
         } else if (dataCategory == TV_SHOW) {
             viewModel.setFavoriteTvShow()
+        }
+    }
+
+    private fun setFavoriteState(state: Boolean) {
+        val fab = detailBinding.fabAddToFavorite
+        if (state) {
+            fab.setImageResource(R.drawable.ic_favorite_filled)
+        } else {
+            fab.setImageResource(R.drawable.ic_favorite_border)
         }
     }
 }
